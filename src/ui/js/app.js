@@ -784,7 +784,7 @@
         html += '<div class="todo-actions">';
         html += '<button class="btn btn-sm btn-ghost" type="button" data-act="edit" title="编辑">编辑</button>';
         html += '<button class="btn btn-sm btn-ghost" type="button" data-act="snooze" title="推迟 10 分钟提醒">推迟</button>';
-        html += '<button class="btn btn-sm btn-danger" type="button" data-act="delete" title="删除">删除</button>';
+        html += '<button class="btn btn-sm btn-danger-ghost" type="button" data-act="delete" title="删除">删除</button>';
         html += "</div>";
 
         html += "</div>";

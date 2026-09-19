@@ -230,11 +230,48 @@
     );
 }
 
+/* --- 危险动作的克制版：平时低调，悬停才转为红色。
+       列表里每张卡片都带按钮，实心红会造成大面积视觉噪音。 --- */
+.btn-danger-ghost {
+    background-image: none;
+    background-color: transparent;
+    /* 同 btn-ghost，默认态需保证小字号可读，悬停时才转为红色警示 */
+    color: var(--text-main);
+    text-shadow: 2px 2px 0 var(--text-shadow);
+    box-shadow:
+        inset 2px 2px 0 0 var(--edge-light),
+        inset -2px -2px 0 0 var(--edge-mid);
+}
+
+.btn-danger-ghost:hover {
+    color: #f7f7f7;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+    background-color: var(--danger);
+    background-image: linear-gradient(
+        180deg,
+        var(--danger-hi),
+        var(--danger) 52%,
+        var(--danger-lo)
+    );
+    box-shadow:
+        inset 2px 2px 0 0 rgba(255, 255, 255, 0.3),
+        inset -2px -2px 0 0 rgba(0, 0, 0, 0.35),
+        2px 2px 0 0 var(--edge-darkest);
+}
+
+.btn-danger-ghost:active {
+    transform: translate(1px, 1px);
+    box-shadow:
+        inset 2px 2px 0 0 rgba(0, 0, 0, 0.45),
+        inset -2px -2px 0 0 rgba(255, 255, 255, 0.15);
+}
+
 /* --- 幽灵按钮：仅描边，用于次级操作 --- */
 .btn-ghost {
     background-image: none;
     background-color: transparent;
-    color: var(--text-soft);
+    /* 用 --text-main 而非 --text-soft：在浅灰面板上 12px 小字需要足够对比度 */
+    color: var(--text-main);
     text-shadow: 2px 2px 0 var(--text-shadow);
     box-shadow:
         inset 2px 2px 0 0 var(--edge-light),
@@ -242,7 +279,11 @@
 }
 
 .btn-ghost:hover {
-    background-color: rgba(255, 255, 255, 0.08);
+    background-color: var(--bg-elevated);
+    box-shadow:
+        inset 2px 2px 0 0 var(--edge-light),
+        inset -2px -2px 0 0 var(--edge-mid),
+        0 0 0 2px var(--accent);
 }
 
 /* --- 图标按钮 --- */
@@ -731,10 +772,11 @@ select.field option {
 }
 
 .empty-state .empty-mark {
-    width: 44px;
-    height: 44px;
-    image-rendering: pixelated;
-    opacity: 0.55;
+    width: 48px;
+    height: 48px;
+    /* 源图自带抗锯齿，缩放时不要用 pixelated，否则边缘会出现硬块 */
+    image-rendering: auto;
+    opacity: 0.7;
 }
 
 .empty-state p {

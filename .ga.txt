@@ -1,0 +1,9 @@
+warning: in the working copy of 'build_logo.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/ui/css/layout.css', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/ui/css/ore_ui.css', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/ui/css/themes.css', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/ui/index.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/ui/js/app.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.workbuddy/memory/2026-09-19.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.workbuddy/memory/MEMORY.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'startup_check.py', LF will be replaced by CRLF the next time Git touches it

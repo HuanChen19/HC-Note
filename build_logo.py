@@ -1,84 +1,53 @@
 # -*- coding: utf-8 -*-
-"""HC-Note LOGO 处理 v2：边缘泛洪去背景 + alpha 重建 + 多尺寸图标导出。
+"""HC-Note LOGO 处理：去除纯白背景，重建 alpha 通道，导出多尺寸图标。
 
-v1 用固定四角取样 + 全局颜色距离，因原图四角色偏不一致导致背景残留。
-v2 改为从图幅四边向内做广度优先泛洪，只把「与边缘相连且颜色接近局部背景」的
-像素判为背景，能正确保留主体内部的浅色区域。
+输入为 1254x1254 的正方形图标源图（JPEG，纯白背景）。
+策略：
+1. 以纯白为基准做颜色距离判定，生成前景遮罩；
+2. 距离落在过渡带的像素按比例给 alpha，保留原图的抗锯齿边缘；
+3. 对遮罩做轻微羽化并清理低 alpha 噪点；
+4. 裁到主体外接框后补成正方形画布，导出 logo.png 与多尺寸图标 + app.ico。
+
+历史说明：更早版本处理的是 154x139 的截图（四角色偏不一致），
+那版改用边缘泛洪判定背景。本版本源图背景是规整纯白，颜色距离法足够。
 """
 
 import os
 import sys
-from collections import deque
 
 from PIL import Image, ImageFilter
 
 
-SRC = r"C:\Users\HuanChen\AppData\Local\Temp\731e5dbb-28f8-4303-a178-ff5c7c5b4bf1.png"
+SRC = (r"C:\Users\HuanChen\.workbuddy\clipboard-images"
+       r"\clipboard-2026-09-19T15-21-13-349Z-8bf0fd37.jpg")
 ROOT = r"E:\1My_Files\.Project\HC-Note"
 OUT_ICONS = os.path.join(ROOT, "assets", "icons")
 
-TOLERANCE = 34.0      # 泛洪时相邻像素允许的颜色跳变
-FEATHER = 0.7         # 遮罩羽化半径
-MIN_ALPHA = 12        # alpha 低于该值直接视为完全透明
+# 背景为纯白，阈值可以放得比较宽松：
+# 距离 < NEAR 判定为背景；距离 > FAR 判定为前景；之间按比例给 alpha。
+NEAR = 18.0        # 与白色的距离小于此值 -> 完全透明
+FAR = 52.0         # 与白色的距离大于此值 -> 完全不透明
+FEATHER = 0.6      # 羽化半径
+MIN_ALPHA = 10     # 低于该 alpha 直接归零，清掉 JPEG 压缩噪点
 
 
-def corners_avg(px, w, h):
-    pts = [(2, 2), (w - 3, 2), (2, h - 3), (w - 3, h - 3)]
-    rs = gs = bs = 0.0
-    for x, y in pts:
-        r, g, b = px[x, y][:3]
-        rs += r
-        gs += g
-        bs += b
-    n = float(len(pts))
-    return rs / n, gs / n, bs / n
+def clear_corner_haze(image, threshold=8):
+    """清除小尺寸缩放后圆角外侧的极淡残影。
 
-
-def flood_background(img):
-    """从四边泛洪标记背景区域，返回背景布尔表。"""
-    w, h = img.size
-    px = img.load()
-    is_bg = [[False] * w for _ in range(h)]
-    br, bg, bb = corners_avg(px, w, h)
-
-    q = deque()
-
-    def try_push(x, y, cur):
-        if x < 0 or y < 0 or x >= w or y >= h:
-            return
-        if is_bg[y][x]:
-            return
-        r, g, b = px[x, y][:3]
-        d = ((r - cur[0]) ** 2 + (g - cur[1]) ** 2 + (b - cur[2]) ** 2) ** 0.5
-        if d <= TOLERANCE:
-            is_bg[y][x] = True
-            q.append((x, y))
-
-    # 四边作为种子
-    for x in range(w):
-        for y in (0, h - 1):
-            r, g, b = px[x, y][:3]
-            d = ((r - br) ** 2 + (g - bg) ** 2 + (b - bb) ** 2) ** 0.5
-            if d <= TOLERANCE * 1.8 and not is_bg[y][x]:
-                is_bg[y][x] = True
-                q.append((x, y))
+    Lanczos 降采样会在圆角边界外留下 alpha 极低的像素（例如 1-7），
+    在深色背景下会呈现为一层几乎不可见但确实存在的灰雾。
+    这里把低于阈值的 alpha 直接归零。
+    """
+    px = image.load()
+    w, h = image.size
+    cleared = 0
     for y in range(h):
-        for x in (0, w - 1):
-            r, g, b = px[x, y][:3]
-            d = ((r - br) ** 2 + (g - bg) ** 2 + (b - bb) ** 2) ** 0.5
-            if d <= TOLERANCE * 1.8 and not is_bg[y][x]:
-                is_bg[y][x] = True
-                q.append((x, y))
-
-    while q:
-        x, y = q.popleft()
-        cur = px[x, y][:3]
-        try_push(x + 1, y, cur)
-        try_push(x - 1, y, cur)
-        try_push(x, y + 1, cur)
-        try_push(x, y - 1, cur)
-
-    return is_bg
+        for x in range(w):
+            r, g, b, a = px[x, y]
+            if 0 < a < threshold:
+                px[x, y] = (r, g, b, 0)
+                cleared += 1
+    return image
 
 
 def main():
@@ -93,28 +62,33 @@ def main():
     w, h = img.size
     print("source: %dx%d" % (w, h))
 
-    is_bg = flood_background(img)
-    bg_count = sum(1 for row in is_bg for v in row if v)
-    print("background pixels: %d / %d (%.1f%%)" % (bg_count, w * h, 100.0 * bg_count / (w * h)))
+    px = img.load()
 
-    # 构建遮罩：背景 0，前景 255
+    # 构建遮罩：距离白色越远越不透明
     mask = Image.new("L", (w, h), 0)
     mp = mask.load()
-    px = img.load()
     for y in range(h):
         for x in range(w):
-            if not is_bg[y][x]:
+            r, g, b = px[x, y][:3]
+            d = ((255 - r) ** 2 + (255 - g) ** 2 + (255 - b) ** 2) ** 0.5
+            if d <= NEAR:
+                mp[x, y] = 0
+            elif d >= FAR:
                 mp[x, y] = 255
+            else:
+                mp[x, y] = int(255.0 * (d - NEAR) / (FAR - NEAR))
 
     mask = mask.filter(ImageFilter.GaussianBlur(FEATHER))
 
-    # 二次阈值清理半透明噪点
+    # 清理低 alpha 噪点
     mp = mask.load()
+    cleared = 0
     for y in range(h):
         for x in range(w):
-            v = mp[x, y]
-            if v < MIN_ALPHA:
+            if 0 < mp[x, y] < MIN_ALPHA:
                 mp[x, y] = 0
+                cleared += 1
+    print("cleared low-alpha noise pixels: %d" % cleared)
 
     out = img.copy()
     out.putalpha(mask)
@@ -128,31 +102,46 @@ def main():
     cw, ch = cropped.size
     print("cropped: %dx%d" % (cw, ch))
 
+    # 补成正方形画布，主体居中，留少量呼吸边距
     side = max(cw, ch)
-    pad = int(side * 0.07)
+    pad = int(side * 0.02)
     canvas_side = side + pad * 2
     canvas = Image.new("RGBA", (canvas_side, canvas_side), (0, 0, 0, 0))
     canvas.paste(cropped, ((canvas_side - cw) // 2, (canvas_side - ch) // 2), cropped)
+    print("canvas: %dx%d" % (canvas_side, canvas_side))
 
     logo_path = os.path.join(OUT_ICONS, "logo.png")
     canvas.save(logo_path, "PNG")
     print("saved: " + logo_path)
 
+    # 小尺寸专用画布：不留呼吸边距，让主体尽量填满，提升 16/32px 下的辨识度
+    small_canvas = Image.new("RGBA", (side, side), (0, 0, 0, 0))
+    small_canvas.paste(cropped, ((side - cw) // 2, (side - ch) // 2), cropped)
+
     sizes = [256, 128, 64, 48, 32, 16]
     frames = []
     for s in sizes:
-        im = canvas.resize((s, s), Image.LANCZOS)
+        # 极小尺寸下额外内缩留白会明显削弱辨识度，用小尺寸专用画布放大主体
+        src = small_canvas if s <= 32 else canvas
+        im = src.resize((s, s), Image.LANCZOS)
+        im = clear_corner_haze(im)
         p = os.path.join(OUT_ICONS, "icon_%d.png" % s)
         im.save(p, "PNG")
         frames.append(im)
         print("saved: " + p)
+
+    # 高分辨率版本，供文档与展示使用
+    hero_path = os.path.join(OUT_ICONS, "logo_512.png")
+    canvas.resize((512, 512), Image.LANCZOS).save(hero_path, "PNG")
+    print("saved: " + hero_path)
 
     ico_path = os.path.join(OUT_ICONS, "app.ico")
     frames[0].save(ico_path, format="ICO", sizes=[(s, s) for s in sizes])
     print("saved: " + ico_path)
 
     tray_path = os.path.join(OUT_ICONS, "tray.png")
-    canvas.resize((64, 64), Image.LANCZOS).save(tray_path, "PNG")
+    tray = clear_corner_haze(canvas.resize((64, 64), Image.LANCZOS))
+    tray.save(tray_path, "PNG")
     print("saved: " + tray_path)
 
     return 0

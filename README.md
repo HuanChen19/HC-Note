@@ -75,10 +75,27 @@ HC-Note/
 ├── build_logo.py               # LOGO 去背景与图标生成脚本
 ├── build_exe.bat               # 一键打包 PyInstaller 脚本
 ├── HC-Note.spec                # PyInstaller 打包规格
+├── selftest.py                 # 数据层与调度逻辑自测（51 项断言）
+├── startup_check.py            # 启动链路与接口对齐校验（21 项断言）
 ├── 启动(源码运行).bat          # 快捷启动脚本
 ├── requirements.txt            # Python 依赖清单
 └── README.md                   # 本文件
 ```
+
+## 自测
+
+改动后端或前后端接口后，建议运行以下两个脚本做回归：
+
+```bash
+# 数据层与调度逻辑：持久化、原子写入、提醒节点、状态校准（51 项）
+python selftest.py
+
+# 启动链路：路径解析、资源引用、CSS 变量完整性、前后端接口对齐（21 项）
+python startup_check.py
+```
+
+两个脚本都会在项目根输出 `*_report.txt` 报告文件，
+其中 `startup_check.py` 会自动比对新加的 CSS 变量引用是否都有定义。
 
 ## 快捷键
 
@@ -123,6 +140,26 @@ HC-Note/
   ]
 }
 ```
+
+## 关于图标
+
+`assets/icons/` 下的全部图标由 `build_logo.py` 从源图自动生成，
+包含去背景、边缘羽化、外接框裁切、多尺寸降采样与 ICO 封装：
+
+| 文件 | 用途 |
+| --- | --- |
+| `app.ico` | 可执行文件图标（内嵌 256/128/64/48/32/16 六个尺寸） |
+| `tray.png` | 系统托盘图标（64×64） |
+| `logo.png` | 高清原图（1116×1116，供文档与二次设计使用） |
+| `icon_256/128/64/48/32/16.png` | 各尺寸 PNG（16/32 为小尺寸专用画布，主体占比更高） |
+
+重新生成图标（修改源图路径后）：
+
+```bash
+python build_logo.py
+```
+
+脚本会自动清除小尺寸降采样产生的圆角外侧极淡残影。
 
 ## 打包为 EXE
 

@@ -26,8 +26,8 @@
 
     /* 文字 */
     --text-main: #1f1f1f;
-    --text-soft: #4a4a4a;
-    --text-dim: #6e6e6e;
+    --text-soft: #3a3a3a;
+    --text-dim: #5c5c5c;
     --text-invert: #f7f7f7;
     --text-shadow: #b8b8b8;
 
@@ -97,8 +97,8 @@
     --edge-darkest: #0a0a0c;
 
     --text-main: #e8e8e8;
-    --text-soft: #b6b6bc;
-    --text-dim: #8a8a92;
+    --text-soft: #c4c4ca;
+    --text-dim: #9a9aa2;
     --text-invert: #1f1f1f;
     --text-shadow: #1a1a1e;
 

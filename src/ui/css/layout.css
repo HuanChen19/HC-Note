@@ -225,7 +225,8 @@
     padding: 8px 10px;
     font-size: 13px;
     font-weight: bold;
-    color: var(--text-soft);
+    /* 小字号在浅灰面板上需要足够对比度，这里用主文字色 */
+    color: var(--text-main);
     text-shadow: 1px 1px 0 var(--text-shadow);
     cursor: pointer;
     background-color: transparent;
@@ -236,7 +237,7 @@
 }
 
 .filter-item:hover {
-    background-color: rgba(255, 255, 255, 0.09);
+    background-color: var(--bg-elevated);
     color: var(--text-main);
 }
 
@@ -389,9 +390,13 @@
     }
 }
 
-/* 已完成：整体降饱和 */
-.todo-item.is-done {
+/* 已完成：内容降饱和，但操作按钮保持可见度，避免无法看清按钮文字 */
+.todo-item.is-done .todo-main {
     opacity: 0.62;
+}
+
+.todo-item.is-done .prio-bar {
+    opacity: 0.5;
 }
 
 /* 已超时 */
