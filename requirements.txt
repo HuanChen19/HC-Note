@@ -1,0 +1,11 @@
+# HC-Note 依赖清单
+# Python 3.10+ ；界面基于 Windows 内置 Edge WebView2 运行时渲染
+
+pywebview>=5.0        # 原生窗口容器，使用系统 WebView2，不内置 Chromium
+windows-toasts>=1.2   # Windows 10/11 原生 Toast 通知，支持操作按钮
+pystray>=0.19         # 系统托盘图标与右键菜单
+Pillow>=10.0          # 托盘图标与图像处理
+
+# 说明：
+# 运行本程序需要系统已安装 Microsoft Edge WebView2 Runtime。
+# Windows 10/11 通常自带；若缺失可从微软官网下载 Evergreen 安装包。

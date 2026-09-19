@@ -1,0 +1,213 @@
+/* ==========================================================================
+   themes.css - 亮色 / 暗色主题变量定义
+   采用纯 CSS 手绘 Ore UI 质感：通过分层渐变模拟基岩颗粒与立体边框浮雕，
+   不依赖任何外部贴图资源。
+   ========================================================================== */
+
+/* ---------- 亮色主题：石英 / 桦木质感 ---------- */
+:root,
+:root[data-theme="light"] {
+    color-scheme: light;
+
+    /* 基底与面板 */
+    --bg-app: #d8d8d8;
+    --bg-app-2: #e6e6e6;
+    --bg-panel: #c6c6c6;
+    --bg-panel-2: #b4b4b4;
+    --bg-inset: #a8a8a8;
+    --bg-elevated: #d4d4d4;
+
+    /* 立体边框：外凸高光 / 内凹阴影 */
+    --edge-light: #ffffff;
+    --edge-lighter: #f2f2f2;
+    --edge-mid: #a0a0a0;
+    --edge-dark: #6e6e6e;
+    --edge-darkest: #4a4a4a;
+
+    /* 文字 */
+    --text-main: #1f1f1f;
+    --text-soft: #4a4a4a;
+    --text-dim: #6e6e6e;
+    --text-invert: #f7f7f7;
+    --text-shadow: #b8b8b8;
+
+    /* 主行动按钮：草方块绿 */
+    --accent: #5b9e3e;
+    --accent-hi: #7cc24f;
+    --accent-lo: #3f7a29;
+    --accent-text: #f7f7f7;
+    --accent-shadow: #24421a;
+
+    /* 危险动作：红石红 */
+    --danger: #b02e26;
+    --danger-hi: #cf4339;
+    --danger-lo: #7f201a;
+
+    /* 优先级色（MC 羊毛色） */
+    --prio-low: #6ea8d8;
+    --prio-low-lo: #47759c;
+    --prio-medium: #c9b02e;
+    --prio-medium-lo: #8f7d1f;
+    --prio-high: #e08a2e;
+    --prio-high-lo: #a55f18;
+    --prio-urgent: #c0392b;
+    --prio-urgent-lo: #832419;
+
+    /* 状态色 */
+    --st-pending: #8a8a8a;
+    --st-running: #d4af37;
+    --st-running-glow: rgba(212, 175, 55, 0.45);
+    --st-done: #5b9e3e;
+    --st-expired: #b02e26;
+
+    /* 输入控件 */
+    --field-bg: #b8b8b8;
+    --field-bg-focus: #c4c4c4;
+    --field-edge-light: #8e8e8e;
+    --field-edge-dark: #e8e8e8;
+
+    /* 滚动条 */
+    --scroll-track: #9c9c9c;
+    --scroll-thumb: #c8c8c8;
+    --scroll-thumb-hi: #e0e0e0;
+
+    /* 遮罩与阴影 */
+    --scrim: rgba(20, 20, 20, 0.55);
+    --window-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+
+    /* Minecraft 文字阴影规则：取（基色 & 0xFCFCFC）>> 2 */
+    --txt-shadow-dx: 2px;
+}
+
+/* ---------- 暗色主题：深板岩 / 黑石质感 ---------- */
+:root[data-theme="dark"] {
+    color-scheme: dark;
+
+    --bg-app: #1e1e22;
+    --bg-app-2: #26262b;
+    --bg-panel: #2c2c30;
+    --bg-panel-2: #232327;
+    --bg-inset: #191a1c;
+    --bg-elevated: #36363c;
+
+    --edge-light: #5a5a62;
+    --edge-lighter: #4a4a52;
+    --edge-mid: #1a1a1e;
+    --edge-dark: #121215;
+    --edge-darkest: #0a0a0c;
+
+    --text-main: #e8e8e8;
+    --text-soft: #b6b6bc;
+    --text-dim: #8a8a92;
+    --text-invert: #1f1f1f;
+    --text-shadow: #1a1a1e;
+
+    --accent: #4a8a34;
+    --accent-hi: #6ab04a;
+    --accent-lo: #33641f;
+    --accent-text: #f2f2f2;
+    --accent-shadow: #0f1f0a;
+
+    --danger: #9c2820;
+    --danger-hi: #bd3a30;
+    --danger-lo: #681913;
+
+    --prio-low: #5b8fc4;
+    --prio-low-lo: #38566f;
+    --prio-medium: #b09a24;
+    --prio-medium-lo: #6e6016;
+    --prio-high: #c67a22;
+    --prio-high-lo: #774812;
+    --prio-urgent: #a83024;
+    --prio-urgent-lo: #661c14;
+
+    --st-pending: #6e6e76;
+    --st-running: #d4af37;
+    --st-running-glow: rgba(212, 175, 55, 0.35);
+    --st-done: #4a8a34;
+    --st-expired: #9c2820;
+
+    --field-bg: #141417;
+    --field-bg-focus: #1c1c21;
+    --field-edge-light: #0d0d0f;
+    --field-edge-dark: #4a4a52;
+
+    --scroll-track: #1a1a1e;
+    --scroll-thumb: #44444c;
+    --scroll-thumb-hi: #5c5c66;
+
+    --scrim: rgba(0, 0, 0, 0.68);
+    --window-shadow: 0 6px 26px rgba(0, 0, 0, 0.6);
+}
+
+/* ---------- 字体栈 ---------- */
+:root {
+    /* 若日后在 assets/fonts 内置像素字体，只改这一处即可全局生效 */
+    --font-pixel: "Minecraft AE", "Mojangles", "Unifont";
+    --font-fallback: "Microsoft YaHei UI", "Microsoft YaHei", "Segoe UI",
+        system-ui, sans-serif;
+    --font-ui: var(--font-pixel), var(--font-fallback);
+}
+
+/* ---------- 全局基础 ---------- */
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    background-color: var(--bg-app);
+    /* 手绘石纹：两层不同角度的细密渐变叠加，模拟基岩颗粒 */
+    background-image:
+        repeating-linear-gradient(
+            45deg,
+            rgba(255, 255, 255, 0.035) 0px,
+            rgba(255, 255, 255, 0.035) 2px,
+            rgba(0, 0, 0, 0.028) 2px,
+            rgba(0, 0, 0, 0.028) 4px
+        ),
+        repeating-linear-gradient(
+            -45deg,
+            rgba(0, 0, 0, 0.022) 0px,
+            rgba(0, 0, 0, 0.022) 2px,
+            rgba(255, 255, 255, 0.022) 2px,
+            rgba(255, 255, 255, 0.022) 4px
+        ),
+        linear-gradient(180deg, var(--bg-app-2), var(--bg-app));
+    color: var(--text-main);
+    /* 像素字体优先，系统字体回退。
+       未内置字体文件时，依赖下方系统栈保证可读性。
+       -webkit-font-smoothing: none 让字缘保持硬边，贴近像素观感。 */
+    font-family: "Minecraft AE", "Mojangles", "Unifont",
+        "Microsoft YaHei UI", "Microsoft YaHei", "Segoe UI",
+        system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    user-select: none;
+    -webkit-font-smoothing: none;
+    transition: background-color 0.18s linear, color 0.18s linear;
+}
+
+/* 主题切换过渡：颜色平滑过渡但布局不抖动 */
+button,
+input,
+textarea,
+select,
+.card,
+.panel,
+.todo-item {
+    transition: background-color 0.18s linear, border-color 0.18s linear,
+        color 0.18s linear, box-shadow 0.18s linear;
+}
+
+::selection {
+    background: var(--accent);
+    color: var(--accent-text);
+}

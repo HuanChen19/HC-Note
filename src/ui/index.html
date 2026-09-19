@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HC-Note 待办事项</title>
+    <link rel="icon" type="image/png" href="../../assets/icons/icon_64.png">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/ore_ui.css">
+    <link rel="stylesheet" href="css/layout.css">
+</head>
+<body>
+    <div class="app">
+        <!-- 顶栏 -->
+        <header class="topbar">
+            <div class="brand">
+                <img class="brand-logo" src="../../assets/icons/logo.png" alt="HC-Note">
+                <div class="brand-text">
+                    <span class="brand-name">HC-Note</span>
+                    <span class="brand-sub">待办事项</span>
+                </div>
+            </div>
+
+            <div class="stats" id="stats">
+                <div class="stat">
+                    <span class="stat-num" id="stat-total">0</span>
+                    <span class="stat-label">全部</span>
+                </div>
+                <div class="stat is-running">
+                    <span class="stat-num" id="stat-running">0</span>
+                    <span class="stat-label">进行中</span>
+                </div>
+                <div class="stat is-done">
+                    <span class="stat-num" id="stat-done">0</span>
+                    <span class="stat-label">已完成</span>
+                </div>
+                <div class="stat is-expired">
+                    <span class="stat-num" id="stat-expired">0</span>
+                    <span class="stat-label">已超时</span>
+                </div>
+            </div>
+
+            <div class="topbar-actions">
+                <div class="seg" id="theme-seg" role="group" aria-label="主题切换">
+                    <button class="seg-btn" type="button" data-theme-value="light">亮色</button>
+                    <button class="seg-btn" type="button" data-theme-value="dark">暗色</button>
+                    <button class="seg-btn" type="button" data-theme-value="system">跟随系统</button>
+                </div>
+                <button class="btn btn-icon btn-ghost" type="button" id="btn-settings" title="设置">
+                    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                        <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="2" shape-rendering="crispEdges"/>
+                    </svg>
+                </button>
+                <button class="btn btn-icon btn-ghost" type="button" id="btn-tray" title="最小化到托盘">
+                    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                        <path d="M3 9l5 5 5-5" stroke="currentColor" stroke-width="2" shape-rendering="crispEdges"/>
+                        <path d="M3 5h10" stroke="currentColor" stroke-width="2" shape-rendering="crispEdges"/>
+                    </svg>
+                </button>
+                <button class="btn btn-primary" type="button" id="btn-new">新增待办</button>
+            </div>
+        </header>
+
+        <!-- 主体 -->
+        <div class="main">
+            <!-- 左侧栏 -->
+            <aside class="sidebar">
+                <section class="panel side-card">
+                    <div class="side-title">
+                        <span>快速新增</span>
+                    </div>
+                    <div class="quick-add">
+                        <input class="field" type="text" id="quick-input"
+                               placeholder="输入待办标题后回车" maxlength="120">
+                        <button class="btn btn-primary btn-icon" type="button" id="quick-submit"
+                                title="添加">+</button>
+                    </div>
+                </section>
+
+                <section class="panel side-card">
+                    <div class="side-title">
+                        <span>状态过滤</span>
+                    </div>
+                    <div class="filter-list" id="filter-list"></div>
+                </section>
+
+                <section class="panel side-card is-grow">
+                    <div class="side-title">
+                        <span>分组</span>
+                    </div>
+                    <div class="group-list" id="group-list"></div>
+                </section>
+            </aside>
+
+            <!-- 任务区 -->
+            <main class="content">
+                <div class="list-head">
+                    <h1 class="list-title" id="list-title">全部待办</h1>
+                    <div class="list-head-actions">
+                        <select class="field" id="sort-select" style="width:auto;min-height:30px;padding:4px 28px 4px 8px;font-size:12px;">
+                            <option value="time">按时间排序</option>
+                            <option value="priority">按优先级排序</option>
+                            <option value="created">按创建排序</option>
+                        </select>
+                        <input class="field search-field" type="search" id="search-input"
+                               placeholder="搜索标题或描述">
+                        <button class="btn btn-ghost btn-sm" type="button" id="btn-clear-done">
+                            清空已完成
+                        </button>
+                    </div>
+                </div>
+
+                <div class="panel-inset task-scroll scroll-area" id="task-scroll">
+                    <div id="task-list"></div>
+                    <div class="empty-state" id="empty-state" hidden>
+                        <svg class="empty-mark" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                            <rect x="1" y="1" width="14" height="14" stroke="currentColor" stroke-width="1.4"/>
+                            <path d="M4.5 8.2l2.3 2.3 4.7-4.7" stroke="currentColor" stroke-width="1.8" shape-rendering="crispEdges"/>
+                        </svg>
+                        <p id="empty-text">暂无待办事项</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- 新增 / 编辑弹窗 -->
+    <div class="modal-scrim" id="task-modal">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="task-modal-title">
+            <div class="modal-head">
+                <h2 id="task-modal-title">新增待办</h2>
+                <button class="btn btn-icon btn-ghost btn-sm" type="button" id="task-modal-close"
+                        title="关闭">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <label for="f-title">标题</label>
+                    <input class="field" type="text" id="f-title"
+                           placeholder="要做什么？" maxlength="120">
+                </div>
+
+                <div class="form-row">
+                    <label for="f-desc">详细描述</label>
+                    <textarea class="field" id="f-desc"
+                              placeholder="补充说明，支持多行文本"></textarea>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-row">
+                        <label for="f-priority">优先级</label>
+                        <select class="field" id="f-priority">
+                            <option value="low">低</option>
+                            <option value="medium" selected>中</option>
+                            <option value="high">高</option>
+                            <option value="urgent">紧急</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label for="f-group">分组</label>
+                        <input class="field" type="text" id="f-group"
+                               placeholder="工作 / 开发 / 生活" maxlength="30" list="group-options">
+                        <datalist id="group-options"></datalist>
+                    </div>
+                </div>
+
+                <hr class="sep">
+
+                <div class="form-grid">
+                    <div class="form-row">
+                        <label for="f-start">开始时间</label>
+                        <div class="dtp" id="dtp-start">
+                            <div class="dtp-input-row">
+                                <input class="field dtp-value" type="text" id="f-start"
+                                       placeholder="YYYY-MM-DD HH:mm" autocomplete="off">
+                                <button class="btn btn-sm btn-ghost dtp-toggle" type="button"
+                                        title="选择日期">▦</button>
+                            </div>
+                            <div class="cal-pop" data-cal="start"></div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label for="f-end">结束时间</label>
+                        <div class="dtp" id="dtp-end">
+                            <div class="dtp-input-row">
+                                <input class="field dtp-value" type="text" id="f-end"
+                                       placeholder="YYYY-MM-DD HH:mm" autocomplete="off">
+                                <button class="btn btn-sm btn-ghost dtp-toggle" type="button"
+                                        title="选择日期">▦</button>
+                            </div>
+                            <div class="cal-pop" data-cal="end"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label>快捷预设</label>
+                    <div class="dtp-presets" id="dtp-presets"></div>
+                </div>
+
+                <div class="form-error" id="form-error"></div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-ghost" type="button" id="task-modal-cancel">取消</button>
+                <button class="btn btn-primary" type="button" id="task-modal-save">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 设置弹窗 -->
+    <div class="modal-scrim" id="settings-modal">
+        <div class="modal" style="width:min(480px,100%);" role="dialog" aria-modal="true"
+             aria-labelledby="settings-modal-title">
+            <div class="modal-head">
+                <h2 id="settings-modal-title">设置</h2>
+                <button class="btn btn-icon btn-ghost btn-sm" type="button" id="settings-modal-close"
+                        title="关闭">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <label for="s-theme">主题</label>
+                    <select class="field" id="s-theme">
+                        <option value="system">跟随系统</option>
+                        <option value="light">亮色</option>
+                        <option value="dark">暗色</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label for="s-before">结束前提醒（分钟）</label>
+                    <input class="field" type="number" id="s-before" min="0" max="240" step="5" value="15">
+                    <span class="form-hint">设为 0 表示关闭结束前预警，仅在开始与结束时提醒。</span>
+                </div>
+
+                <div class="form-row">
+                    <label>行为选项</label>
+                    <label class="mc-check-row" style="display:flex;align-items:center;gap:9px;font-size:13px;cursor:pointer;">
+                        <input class="mc-checkbox" type="checkbox" id="s-sound" data-checked="false">
+                        <span>启用交互与提醒音效</span>
+                    </label>
+                    <label class="mc-check-row" style="display:flex;align-items:center;gap:9px;font-size:13px;cursor:pointer;margin-top:8px;">
+                        <input class="mc-checkbox" type="checkbox" id="s-tray" data-checked="true">
+                        <span>关闭窗口时最小化到系统托盘</span>
+                    </label>
+                </div>
+
+                <hr class="sep">
+
+                <div class="form-row">
+                    <label>运行环境</label>
+                    <div class="drawer-row" id="env-info"></div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-primary" type="button" id="settings-modal-save">完成</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-stack" id="toast-stack"></div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/timepicker.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

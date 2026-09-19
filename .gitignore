@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# 虚拟环境
+.venv/
+venv/
+env/
+.build/
+
+# PyInstaller 构建产物
+build/
+dist/
+*.manifest
+
+# 运行时数据（各用户本地数据不入库）
+data/*.json
+data/*.backup.json
+
+# 编辑器与系统
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+Desktop.ini
+desktop.ini
+
+# 自测与临时产物
+selftest_report.txt
+*.log

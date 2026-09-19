@@ -1,0 +1,756 @@
+/* ==========================================================================
+   ore_ui.css - Ore UI 核心控件样式
+   纯 CSS 手绘实现 Minecraft 基岩版现代 UI 的立体浮雕质感：
+   外凸边框 = 上/左亮边 + 下/右暗边；内凹边框 = 反向叠加 inset 阴影。
+   ========================================================================== */
+
+/* ==========================================================================
+   1. 立体边框基础
+   ========================================================================== */
+
+/* 外凸：受光面在左上，背光面在右下，模拟凸起的方块 */
+.bevel-out {
+    border: 2px solid transparent;
+    box-shadow:
+        inset 2px 2px 0 0 var(--edge-light),
+        inset -2px -2px 0 0 var(--edge-mid),
+        inset 3px 3px 0 0 var(--edge-lighter),
+        inset -3px -3px 0 0 var(--edge-dark),
+        3px 3px 0 0 var(--edge-darkest);
+}
+
+/* 内凹：受光面在右下，背光面在左上，模拟凹陷的槽位 */
+.bevel-in {
+    border: 2px solid transparent;
+    box-shadow:
+        inset 2px 2px 0 0 var(--edge-mid),
+        inset -2px -2px 0 0 var(--edge-light),
+        inset 4px 4px 0 0 var(--edge-dark);
+}
+
+/* ==========================================================================
+   2. 面板容器
+   ========================================================================== */
+
+.panel {
+    position: relative;
+    background-color: var(--bg-panel);
+    background-image:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.06)),
+        repeating-linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.02) 0px,
+            rgba(255, 255, 255, 0.02) 1px,
+            transparent 1px,
+            transparent 3px
+        );
+    border: 2px solid transparent;
+    box-shadow:
+        inset 2px 2px 0 0 var(--edge-light),
+        inset -2px -2px 0 0 var(--edge-mid),
+        inset 4px 4px 0 0 var(--edge-lighter),
+        inset -4px -4px 0 0 var(--edge-dark),
+        4px 4px 0 0 var(--edge-darkest),
+        0 2px 10px rgba(0, 0, 0, 0.18);
+    padding: 14px;
+}
+
+/* 面板内凹变体：用于列表容器、内容槽 */
+.panel-inset {
+    background-color: var(--bg-inset);
+    border: 2px solid transparent;
+    box-shadow:
+        inset 3px 3px 0 0 var(--edge-dark),
+        inset -3px -3px 0 0 var(--edge-lighter),
+        inset 5px 5px 0 0 var(--edge-mid),
+        inset -5px -5px 0 0 var(--edge-light);
+    padding: 10px;
+}
+
+/* 面板标题栏 */
+.panel-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: bold;
+    color: var(--text-main);
+    text-shadow: 2px 2px 0 var(--text-shadow);
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--edge-mid);
+    box-shadow: 0 2px 0 0 var(--edge-light);
+}
+
+.panel-title .ico {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+    image-rendering: pixelated;
+}
+
+/* ==========================================================================
+   3. 按钮
+   ========================================================================== */
+
+.btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 7px 16px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--text-main);
+    text-shadow: 2px 2px 0 var(--text-shadow);
+    cursor: pointer;
+    background-color: var(--bg-panel);
+    background-image: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.14),
+        rgba(0, 0, 0, 0.10)
+    );
+    border: 2px solid transparent;
+    box-shadow:
+        inset 2px 2px 0 0 var(--edge-light),
+        inset -2px -2px 0 0 var(--edge-mid),
+        inset 3px 3px 0 0 var(--edge-lighter),
+        inset -3px -3px 0 0 var(--edge-dark),
+        3px 3px 0 0 var(--edge-darkest);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    white-space: nowrap;
+}
+
+/* 悬浮态：边框高亮 + 轻微上浮 */
+.btn:hover {
+    background-image: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.24),
+        rgba(0, 0, 0, 0.06)
+    );
+    box-shadow:
+        inset 2px 2px 0 0 var(--edge-light),
+        inset -2px -2px 0 0 var(--edge-mid),
+        inset 3px 3px 0 0 var(--edge-lighter),
+        inset -3px -3px 0 0 var(--edge-dark),
+        3px 3px 0 0 var(--edge-darkest),
+        0 0 0 2px rgba(255, 255, 255, 0.22);
+    transform: translateY(-1px);
+}
+
+/* 按下态：整体下压 + 内阴影加深，制造真正被压进去的感觉 */
+.btn:active {
+    transform: translate(2px, 2px);
+    box-shadow:
+        inset 2px 2px 0 0 var(--edge-dark),
+        inset -2px -2px 0 0 var(--edge-mid),
+        inset 4px 4px 6px 0 rgba(0, 0, 0, 0.45),
+        0 0 0 0 var(--edge-darkest);
+}
+
+.btn:focus-visible {
+    box-shadow:
+        inset 2px 2px 0 0 var(--edge-light),
+        inset -2px -2px 0 0 var(--edge-mid),
+        3px 3px 0 0 var(--edge-darkest),
+        0 0 0 2px var(--accent);
+}
+
+.btn:disabled,
+.btn[disabled] {
+    cursor: not-allowed;
+    color: var(--text-dim);
+    text-shadow: none;
+    background-image: none;
+    opacity: 0.6;
+    transform: none;
+}
+
+.btn:disabled:active {
+    transform: none;
+}
+
+/* --- 主行动按钮：草方块绿 --- */
+.btn-primary {
+    color: var(--accent-text);
+    text-shadow: 2px 2px 0 var(--accent-shadow);
+    background-color: var(--accent);
+    background-image: linear-gradient(
+        180deg,
+        var(--accent-hi),
+        var(--accent) 52%,
+        var(--accent-lo)
+    );
+    box-shadow:
+        inset 2px 2px 0 0 rgba(255, 255, 255, 0.42),
+        inset -2px -2px 0 0 rgba(0, 0, 0, 0.35),
+        inset 3px 3px 0 0 rgba(255, 255, 255, 0.18),
+        inset -3px -3px 0 0 rgba(0, 0, 0, 0.28),
+        3px 3px 0 0 var(--accent-shadow);
+}
+
+.btn-primary:hover {
+    background-image: linear-gradient(
+        180deg,
+        #8ed062,
+        var(--accent-hi) 52%,
+        var(--accent)
+    );
+    box-shadow:
+        inset 2px 2px 0 0 rgba(255, 255, 255, 0.52),
+        inset -2px -2px 0 0 rgba(0, 0, 0, 0.32),
+        inset 3px 3px 0 0 rgba(255, 255, 255, 0.22),
+        inset -3px -3px 0 0 rgba(0, 0, 0, 0.26),
+        3px 3px 0 0 var(--accent-shadow),
+        0 0 12px 0 rgba(124, 194, 79, 0.5);
+}
+
+.btn-primary:active {
+    box-shadow:
+        inset 2px 2px 0 0 rgba(0, 0, 0, 0.45),
+        inset -2px -2px 0 0 rgba(255, 255, 255, 0.2),
+        inset 4px 4px 6px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* --- 危险按钮：红石红 --- */
+.btn-danger {
+    color: var(--accent-text);
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+    background-color: var(--danger);
+    background-image: linear-gradient(
+        180deg,
+        var(--danger-hi),
+        var(--danger) 52%,
+        var(--danger-lo)
+    );
+}
+
+/* --- 幽灵按钮：仅描边，用于次级操作 --- */
+.btn-ghost {
+    background-image: none;
+    background-color: transparent;
+    color: var(--text-soft);
+    text-shadow: 2px 2px 0 var(--text-shadow);
+    box-shadow:
+        inset 2px 2px 0 0 var(--edge-light),
+        inset -2px -2px 0 0 var(--edge-mid);
+}
+
+.btn-ghost:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* --- 图标按钮 --- */
+.btn-icon {
+    min-width: 34px;
+    padding: 7px;
+}
+
+.btn-sm {
+    min-height: 26px;
+    padding: 4px 10px;
+    font-size: 12px;
+}
+
+/* ==========================================================================
+   4. 复选框（Minecraft 风格）
+   ========================================================================== */
+
+.mc-checkbox {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    flex: 0 0 22px;
+    cursor: pointer;
+    background-color: var(--field-bg);
+    border: 2px solid transparent;
+    box-shadow:
+        inset 2px 2px 0 0 var(--edge-dark),
+        inset -2px -2px 0 0 var(--edge-light),
+        inset 3px 3px 0 0 var(--edge-mid);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    padding: 0;
+}
+
+.mc-checkbox:hover {
+    background-color: var(--field-bg-focus);
+    box-shadow:
+        inset 2px 2px 0 0 var(--edge-dark),
+        inset -2px -2px 0 0 var(--edge-light),
+        inset 3px 3px 0 0 var(--edge-mid),
+        0 0 0 2px var(--accent);
+}
+
+/* 勾选：用两条伪元素画出 MC 的对勾，随状态做缩放动画 */
+.mc-checkbox::after {
+    content: "";
+    width: 11px;
+    height: 6px;
+    border-left: 3px solid var(--accent-text);
+    border-bottom: 3px solid var(--accent-text);
+    transform: rotate(-45deg) translate(1px, -1px) scale(0);
+    transform-origin: center;
+    opacity: 0;
+}
+
+.mc-checkbox[data-checked="true"] {
+    background-color: var(--st-done);
+    background-image: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.28),
+        rgba(0, 0, 0, 0.18)
+    );
+}
+
+.mc-checkbox[data-checked="true"]::after {
+    opacity: 1;
+    animation: check-pop 0.18s steps(3, end) forwards;
+}
+
+@keyframes check-pop {
+    0% {
+        transform: rotate(-45deg) translate(1px, -1px) scale(0);
+    }
+    60% {
+        transform: rotate(-45deg) translate(1px, -1px) scale(1.25);
+    }
+    100% {
+        transform: rotate(-45deg) translate(1px, -1px) scale(1);
+    }
+}
+
+/* ==========================================================================
+   5. 输入控件
+   ========================================================================== */
+
+.field {
+    width: 100%;
+    min-height: 34px;
+    padding: 7px 10px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--text-main);
+    background-color: var(--field-bg);
+    border: 2px solid transparent;
+    box-shadow:
+        inset 2px 2px 0 0 var(--edge-dark),
+        inset -2px -2px 0 0 var(--edge-light),
+        inset 4px 4px 0 0 var(--edge-mid);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    user-select: text;
+}
+
+.field::placeholder {
+    color: var(--text-dim);
+    text-shadow: none;
+}
+
+.field:focus {
+    background-color: var(--field-bg-focus);
+    box-shadow:
+        inset 2px 2px 0 0 var(--edge-dark),
+        inset -2px -2px 0 0 var(--edge-light),
+        inset 4px 4px 0 0 var(--edge-mid),
+        0 0 0 2px var(--accent);
+}
+
+textarea.field {
+    resize: vertical;
+    min-height: 76px;
+    line-height: 1.55;
+}
+
+/* 下拉框：自绘箭头，保持直角与像素感 */
+select.field {
+    cursor: pointer;
+    padding-right: 30px;
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--text-soft) 50%),
+        linear-gradient(135deg, var(--text-soft) 50%, transparent 50%);
+    background-position:
+        calc(100% - 16px) calc(50% + 1px),
+        calc(100% - 10px) calc(50% + 1px);
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+}
+
+select.field option {
+    background-color: var(--bg-panel);
+    color: var(--text-main);
+}
+
+/* ==========================================================================
+   6. 滚动条（经典灰色直角条）
+   ========================================================================== */
+
+.scroll-area {
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+}
+
+.scroll-area::-webkit-scrollbar {
+    width: 12px;
+}
+
+.scroll-area::-webkit-scrollbar-track {
+    background-color: var(--scroll-track);
+    box-shadow:
+        inset 2px 0 0 0 var(--edge-dark),
+        inset -2px 0 0 0 var(--edge-mid);
+}
+
+.scroll-area::-webkit-scrollbar-thumb {
+    background-color: var(--scroll-thumb);
+    border: 2px solid transparent;
+    box-shadow:
+        inset 2px 2px 0 0 var(--edge-light),
+        inset -2px -2px 0 0 var(--edge-mid);
+}
+
+.scroll-area::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scroll-thumb-hi);
+}
+
+.scroll-area::-webkit-scrollbar-corner {
+    background-color: var(--scroll-track);
+}
+
+/* ==========================================================================
+   7. 优先级与状态徽标
+   ========================================================================== */
+
+.prio-bar {
+    width: 5px;
+    flex: 0 0 5px;
+    align-self: stretch;
+    order: 0;
+    border-radius: 0;
+}
+
+.prio-low { background-color: var(--prio-low); }
+.prio-medium { background-color: var(--prio-medium); }
+.prio-high { background-color: var(--prio-high); }
+.prio-urgent { background-color: var(--prio-urgent); }
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 7px;
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--text-main);
+    text-shadow: 1px 1px 0 var(--text-shadow);
+    background-color: var(--bg-panel-2);
+    border: 1px solid var(--edge-mid);
+    box-shadow:
+        inset 1px 1px 0 0 var(--edge-light),
+        inset -1px -1px 0 0 var(--edge-dark);
+    white-space: nowrap;
+}
+
+.badge-prio-low {
+    background-color: var(--prio-low-lo);
+    color: #f2f2f2;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+}
+.badge-prio-medium {
+    background-color: var(--prio-medium-lo);
+    color: #f2f2f2;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+}
+.badge-prio-high {
+    background-color: var(--prio-high-lo);
+    color: #f2f2f2;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+}
+.badge-prio-urgent {
+    background-color: var(--prio-urgent-lo);
+    color: #f2f2f2;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.badge-done {
+    background-color: var(--st-done);
+    color: #f2f2f2;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+}
+.badge-expired {
+    background-color: var(--st-expired);
+    color: #f2f2f2;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+}
+.badge-running {
+    background-color: var(--st-running);
+    color: #2a2205;
+    text-shadow: none;
+}
+
+/* ==========================================================================
+   8. 进度条
+   ========================================================================== */
+
+.progress {
+    position: relative;
+    width: 100%;
+    height: 8px;
+    background-color: var(--bg-inset);
+    box-shadow:
+        inset 2px 2px 0 0 var(--edge-dark),
+        inset -2px -2px 0 0 var(--edge-lighter);
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--st-running);
+    background-image: repeating-linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.22) 0px,
+        rgba(255, 255, 255, 0.22) 2px,
+        transparent 2px,
+        transparent 4px
+    );
+    transition: width 0.3s linear;
+}
+
+.progress-fill.is-done {
+    background-color: var(--st-done);
+}
+
+.progress-fill.is-expired {
+    background-color: var(--st-expired);
+}
+
+/* ==========================================================================
+   9. 模态窗
+   ========================================================================== */
+
+.modal-scrim {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--scrim);
+    z-index: 100;
+    padding: 24px;
+}
+
+.modal-scrim.is-open {
+    display: flex;
+    animation: scrim-in 0.14s linear;
+}
+
+@keyframes scrim-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal {
+    width: min(600px, 100%);
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-panel);
+    background-image: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.06),
+        rgba(0, 0, 0, 0.06)
+    );
+    border: 2px solid transparent;
+    box-shadow:
+        inset 3px 3px 0 0 var(--edge-light),
+        inset -3px -3px 0 0 var(--edge-mid),
+        inset 5px 5px 0 0 var(--edge-lighter),
+        inset -5px -5px 0 0 var(--edge-dark),
+        6px 6px 0 0 var(--edge-darkest),
+        var(--window-shadow);
+    animation: modal-in 0.16s steps(3, end);
+    padding: 0;
+}
+
+@keyframes modal-in {
+    from {
+        transform: translateY(10px) scale(0.97);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 14px;
+    background-color: var(--bg-panel-2);
+    border-bottom: 2px solid var(--edge-mid);
+    box-shadow: 0 2px 0 0 var(--edge-light);
+}
+
+.modal-head h2 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: bold;
+    text-shadow: 2px 2px 0 var(--text-shadow);
+}
+
+.modal-body {
+    padding: 14px;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.modal-foot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 12px 14px;
+    background-color: var(--bg-panel-2);
+    border-top: 2px solid var(--edge-mid);
+    box-shadow: 0 -2px 0 0 var(--edge-light);
+}
+
+/* ==========================================================================
+   10. 表单行
+   ========================================================================== */
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.form-row > label {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--text-soft);
+    text-shadow: 1px 1px 0 var(--text-shadow);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.form-hint {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-shadow: none;
+}
+
+.form-error {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--danger-hi);
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.4);
+    min-height: 16px;
+}
+
+/* ==========================================================================
+   11. 提示条
+   ========================================================================== */
+
+.toast-stack {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 200;
+    pointer-events: none;
+}
+
+.toast-item {
+    padding: 9px 14px;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--text-main);
+    text-shadow: 2px 2px 0 var(--text-shadow);
+    background-color: var(--bg-elevated);
+    border: 2px solid transparent;
+    box-shadow:
+        inset 2px 2px 0 0 var(--edge-light),
+        inset -2px -2px 0 0 var(--edge-mid),
+        3px 3px 0 0 var(--edge-darkest);
+    animation: toast-in 0.16s steps(3, end);
+}
+
+.toast-item.is-error {
+    background-color: var(--danger-lo);
+    color: #f7f7f7;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+@keyframes toast-in {
+    from {
+        transform: translateX(16px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ==========================================================================
+   12. 空状态
+   ========================================================================== */
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 44px 20px;
+    color: var(--text-dim);
+    text-align: center;
+}
+
+.empty-state .empty-mark {
+    width: 44px;
+    height: 44px;
+    image-rendering: pixelated;
+    opacity: 0.55;
+}
+
+.empty-state p {
+    margin: 0;
+    font-size: 13px;
+    text-shadow: 1px 1px 0 var(--text-shadow);
+}
+
+/* ==========================================================================
+   13. 分隔线
+   ========================================================================== */
+
+.sep {
+    height: 2px;
+    margin: 12px 0;
+    background-color: var(--edge-mid);
+    box-shadow: 0 2px 0 0 var(--edge-light);
+    border: none;
+}
